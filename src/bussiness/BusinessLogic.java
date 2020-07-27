@@ -30,7 +30,7 @@ public class BusinessLogic {
         return DaodataLayer.getAllItems();
     }
 
-    public static boolean saveCustomer(ItemTM item){
+    public static boolean saveItem(ItemTM item){
         return DaodataLayer.saveItem(item);
     }
 
