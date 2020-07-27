@@ -10,6 +10,25 @@ import java.util.List;
 
 public class BusinessLogic {
 
+    public static  String getNewCustomerId(){
+        String lastCustId = DaodataLayer.getLastCustId();
+        if (lastCustId ==null){
+            return "C001";
+        }else{
+            int maxId = Integer.parseInt(lastCustId.replace("C",""));
+            maxId = maxId + 1;
+            String id = "";
+            if (maxId < 10) {
+                id = "C00" + maxId;
+            } else if (maxId < 100) {
+                id = "C0" + maxId;
+            } else {
+                id = "C" + maxId;
+            }
+            return id;
+        }
+    }
+
     public static List<CustomerTM> getAllCustomers(){
         return DaodataLayer.getAllCustomer();
     }

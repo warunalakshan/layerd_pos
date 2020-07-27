@@ -174,27 +174,8 @@ public class ManageCustomerFormController implements Initializable {
         txtCustomerName.requestFocus();
         btnSave.setDisable(false);
 
-        // Generate a new id
-        int maxId = 0;
-        try {
-            Statement stm = DBConnection.getInstance().getConnection().createStatement();
-            ResultSet rst = stm.executeQuery("SELECT id FROM Customer ORDER BY id DESC LIMIT 1");
-            if (rst.next()) {
-                maxId = Integer.parseInt(rst.getString(1).replace("C", ""));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        maxId = maxId + 1;
-        String id = "";
-        if (maxId < 10) {
-            id = "C00" + maxId;
-        } else if (maxId < 100) {
-            id = "C0" + maxId;
-        } else {
-            id = "C" + maxId;
-        }
-        txtCustomerId.setText(id);
+        txtCustomerId.setText(BusinessLogic.getNewCustomerId());
+
 
     }
 

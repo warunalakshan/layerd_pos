@@ -13,6 +13,23 @@ import java.util.List;
 public class DaodataLayer {
 //==========================customer================
 
+    public  static String getLastCustId(){
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from Customer order by id desc limit 1");
+            if (resultSet.next()) {
+                return resultSet.getString(1);
+            } else {
+                return null;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return null;
+        }
+    }
+
     public static List<CustomerTM> getAllCustomer() {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
