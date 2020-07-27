@@ -1,5 +1,6 @@
 package controller;
 
+import bussiness.BusinessLogic;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
@@ -7,6 +8,7 @@ import db.DBConnection;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -149,36 +151,13 @@ public class PlaceOrderFormController {
     }
 
     private void loadAllItems() {
-        try {
-            Statement stm = DBConnection.getInstance().getConnection().createStatement();
-            ResultSet rst = stm.executeQuery("SELECT * FROM Item");
-            ObservableList<ItemTM> items = cmbItemCode.getItems();
-            while (rst.next()) {
-                String code = rst.getString(1);
-                String description = rst.getString(2);
-                double unitPrice = rst.getDouble(3);
-                int qtyOnHand = rst.getInt(4);
-                items.add(new ItemTM(code, description, qtyOnHand, unitPrice));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+       cmbItemCode.getItems().clear();
+       cmbItemCode.setItems(FXCollections.observableArrayList(BusinessLogic.getAllItems()));
     }
 
     private void loadAllCustomers() {
-        try {
-            Statement stm = DBConnection.getInstance().getConnection().createStatement();
-            ResultSet rst = stm.executeQuery("SELECT * FROM Customer");
-            ObservableList<CustomerTM> customers = cmbCustomerId.getItems();
-            while (rst.next()) {
-                String id = rst.getString(1);
-                String name = rst.getString(2);
-                String address = rst.getString(3);
-                customers.add(new CustomerTM(id, name, address));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        cmbCustomerId.getItems().clear();
+        cmbCustomerId.setItems(FXCollections.observableArrayList(BusinessLogic.getAllCustomers()));
     }
 
     private void calculateQtyOnHand(ItemTM item) {
@@ -280,39 +259,12 @@ public class PlaceOrderFormController {
 
         // Let's save the order
         //int orderId = Integer.parseInt(lblId.getText().replace("OD", ""));
-        try {
-            PreparedStatement pstm = DBConnection.getInstance().getConnection().prepareStatement("INSERT INTO `Order` VALUES (?,?,?)");
-            pstm.setObject(1, lblId.getText());
-            pstm.setObject(2, LocalDate.now());
-            pstm.setObject(3, cmbCustomerId.getValue().getId());
-            int affectedRows = pstm.executeUpdate();
-            if (affectedRows == 0) {
+      boolean result = BusinessLogic.placeOrder(new OrderTM(lblId.getText(), LocalDate.now(), cmbCustomerId.getValue().getId(), cmbCustomerId.getValue().getName(),
+              0),tblOrderDetails.getItems());
+            if (!result) {
                 new Alert(Alert.AlertType.ERROR, "Mudalali wade awul wage", ButtonType.OK).show();
                 return;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        ObservableList<OrderDetailTM> olOrderDetails = tblOrderDetails.getItems();
-        try {
-            PreparedStatement pstm = DBConnection.getInstance().getConnection().prepareStatement("INSERT INTO OrderDetail VALUES (?,?,?,?)");
-            for (OrderDetailTM orderDetail : olOrderDetails) {
-                // Let's update the stock
-                updateStockQty(orderDetail.getCode(), orderDetail.getQty());
-                pstm.setObject(1, lblId.getText());
-                pstm.setObject(2, orderDetail.getCode());
-                pstm.setObject(3, orderDetail.getQty());
-                pstm.setObject(4, orderDetail.getUnitPrice());
-                int affectedRows = pstm.executeUpdate();
-                if (affectedRows == 0) {
-                    new Alert(Alert.AlertType.ERROR, "Order Detail Ekak Awul Giya", ButtonType.OK).show();
-                    return;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         new Alert(Alert.AlertType.INFORMATION, "Mudalali wade goda", ButtonType.OK).showAndWait();
 
@@ -322,22 +274,6 @@ public class PlaceOrderFormController {
         cmbItemCode.getSelectionModel().clearSelection();
         calculateTotal();
         generateOrderId();
-    }
-
-    private void updateStockQty(String itemCode, int qty) {
-        String sql = "UPDATE Item SET qtyOnHand=qtyOnHand - ? WHERE code=?";
-        try {
-            PreparedStatement pstm = DBConnection.getInstance().getConnection().prepareStatement(sql);
-            pstm.setObject(1, qty);
-            pstm.setObject(2, itemCode);
-            int affectedRows = pstm.executeUpdate();
-            if (affectedRows == 0) {
-                new Alert(Alert.AlertType.ERROR, "Something went wrong while updating the stock", ButtonType.OK).show();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     @FXML
