@@ -5,10 +5,8 @@
  */
 package controller;
 
-import Dao.DaodataLayer;
 import bussiness.BusinessLogic;
 import com.jfoenix.controls.JFXTextField;
-import db.DBConnection;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,16 +25,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import util.CustomerTM;
 import util.ItemTM;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -141,21 +133,19 @@ public class ManageItemFormController implements Initializable {
         }
 
         if (btnSave.getText().equals("Save")) {
-            ItemTM itemTM = new ItemTM(txtCode.getText(), txtDescription.getText(), qtyOnHand, unitPrice);
-            boolean result = BusinessLogic.saveItem(itemTM);
+
+            boolean result = BusinessLogic.saveItem(txtCode.getText(), txtDescription.getText(), qtyOnHand, unitPrice);
             if (!result){
-
+                new Alert(Alert.AlertType.ERROR, "Failed to save the item", ButtonType.OK).show();
             }
-
             btnAddNew_OnAction(event);
         } else {
             ItemTM selectedItem = tblItems.getSelectionModel().getSelectedItem();
-            ItemTM itemTM = new ItemTM(txtCode.getText(),txtDescription.getText(),Integer.parseInt(txtQtyOnHand.getText()),Double.parseDouble(txtUnitPrice.getText()));
-            boolean result = BusinessLogic.updateItem(itemTM);
-            if (!result){
 
+            boolean result = BusinessLogic.updateItem(txtDescription.getText(),  qtyOnHand, unitPrice, selectedItem.getCode());
+            if (!result) {
+                new Alert(Alert.AlertType.ERROR, "Failed to update the Item").show();
             }
-
             tblItems.refresh();
             btnAddNew_OnAction(event);
         }

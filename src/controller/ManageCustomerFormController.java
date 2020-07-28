@@ -126,17 +126,14 @@ public class ManageCustomerFormController implements Initializable {
         }
 
         if (btnSave.getText().equals("Save")) {
-            CustomerTM customerTM = new CustomerTM(txtCustomerId.getText(),txtCustomerName.getText(),txtCustomerAddress.getText());
-            BusinessLogic.saveCustomer(customerTM);
+            BusinessLogic.saveCustomer(txtCustomerId.getText(),txtCustomerName.getText(),txtCustomerAddress.getText());
             btnAddNew_OnAction(event);
         } else {
             CustomerTM selectedItem = tblCustomers.getSelectionModel().getSelectedItem();
-            CustomerTM customerTM = new CustomerTM(txtCustomerName.getText(), txtCustomerAddress.getText(), selectedItem.getId());
-            boolean result = BusinessLogic.updateCustomer(customerTM);
-            if (!result){
-                new Alert(Alert.AlertType.ERROR, "Update Failed",ButtonType.OK).showAndWait();
+            boolean result = BusinessLogic.updateCustomer(txtCustomerName.getText(), txtCustomerAddress.getText(), selectedItem.getId());
+            if (!result) {
+                new Alert(Alert.AlertType.ERROR, "Failed to update the customer", ButtonType.OK).show();
             }
-
             tblCustomers.refresh();
             btnAddNew_OnAction(event);
         }
