@@ -29,6 +29,10 @@ public class BusinessLogic {
         }
     }
 
+    public static String getNewItemCode(){
+        String lastitemCode = DaodataLayer.
+    }
+
     public static List<CustomerTM> getAllCustomers(){
         return DaodataLayer.getAllCustomer();
     }

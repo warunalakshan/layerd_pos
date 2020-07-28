@@ -30,6 +30,39 @@ public class DaodataLayer {
         }
     }
 
+    public static String getLastItemCode(){
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from Item order by code desc limit 1");
+            if (resultSet.next()){
+                return resultSet.getString(1);
+            }else{
+                return null;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getLastOrderId(){
+        try{
+            Connection connection = DBConnection.getInstance().getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from `Order` order by code desc limit 1");
+            if (resultSet.next()){
+                return resultSet.getString(1);
+            }else {
+                return null;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return null;
+        }
+    }
+
     public static List<CustomerTM> getAllCustomer() {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
