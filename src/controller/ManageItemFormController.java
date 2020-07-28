@@ -5,6 +5,7 @@
  */
 package controller;
 
+import Dao.DaodataLayer;
 import bussiness.BusinessLogic;
 import com.jfoenix.controls.JFXTextField;
 import db.DBConnection;
@@ -140,7 +141,8 @@ public class ManageItemFormController implements Initializable {
         }
 
         if (btnSave.getText().equals("Save")) {
-            boolean result = BusinessLogic.saveItem(txtCode.getText(), txtDescription.getText(), qtyOnHand, unitPrice);
+            ItemTM itemTM = new ItemTM(txtCode.getText(), txtDescription.getText(), qtyOnHand, unitPrice);
+            boolean result = BusinessLogic.saveItem(itemTM);
             if (!result){
 
             }
@@ -148,8 +150,8 @@ public class ManageItemFormController implements Initializable {
             btnAddNew_OnAction(event);
         } else {
             ItemTM selectedItem = tblItems.getSelectionModel().getSelectedItem();
-
-            boolean result = BusinessLogic.updateItem(txtDescription.getText(), qtyOnHand, unitPrice, selectedItem.getCode());
+            ItemTM itemTM = new ItemTM(txtCode.getText(),txtDescription.getText(),Integer.parseInt(txtQtyOnHand.getText()),Double.parseDouble(txtUnitPrice.getText()));
+            boolean result = BusinessLogic.updateItem(itemTM);
             if (!result){
 
             }
@@ -194,26 +196,7 @@ public class ManageItemFormController implements Initializable {
         btnSave.setDisable(false);
 
         // Generate a new id
-        int maxCode = 0;
-        try {
-            Statement stm = DBConnection.getInstance().getConnection().createStatement();
-            ResultSet rst = stm.executeQuery("SELECT code FROM Item ORDER BY code DESC LIMIT 1");
-            if (rst.next()) {
-                maxCode = Integer.parseInt(rst.getString(1).replace("I", ""));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        maxCode = maxCode + 1;
-        String code = "";
-        if (maxCode < 10) {
-            code = "I00" + maxCode;
-        } else if (maxCode < 100) {
-            code = "I0" + maxCode;
-        } else {
-            code = "I" + maxCode;
-        }
-        txtCode.setText(code);
+       txtCode.setText(BusinessLogic.getNewItemCode());
 
     }
 

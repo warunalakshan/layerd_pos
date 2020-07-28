@@ -253,5 +253,61 @@ public class DaodataLayer {
             }
         }
     }
+    public static boolean saveOrder(OrderTM order){
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+            PreparedStatement pstm = connection.prepareStatement("INSERT INTO `Order` VALUES (?,?,?)");
+            pstm.setObject(1, order.getOrderId());
+            pstm.setObject(2, order.getOrderDate());
+            pstm.setObject(3, order.getCustomerId());
+            return pstm.executeUpdate()> 0;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean saveOrderDetail(String orderId, List<OrderDetailTM> orderDetails){
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+            PreparedStatement pstm = connection.prepareStatement("INSERT INTO `OrderDetail` VALUES (?,?,?,?)");
+            boolean result = false;
+            for (OrderDetailTM orderDetail: orderDetails) {
+                pstm.setObject(1, orderId);
+                pstm.setObject(2, orderDetail.getCode());
+                pstm.setObject(3, orderDetail.getQty());
+                pstm.setObject(4, orderDetail.getUnitPrice());
+                result =  pstm.executeUpdate()> 0;
+                if (!result){
+                    return false;
+                }
+            }
+            return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateQty(List<OrderDetailTM> orderDetails){
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+            PreparedStatement pstm = connection.prepareStatement("UPDATE Item SET qtyOnHand=qtyOnHand-? WHERE code=?");
+            boolean result = false;
+            for (OrderDetailTM orderDetail: orderDetails) {
+                pstm.setObject(1, orderDetail.getQty());
+                pstm.setObject(2, orderDetail.getCode());
+                result =  pstm.executeUpdate()> 0;
+                if (!result){
+                    return false;
+                }
+            }
+            return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+    }
 
 }
+
