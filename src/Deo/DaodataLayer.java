@@ -1,4 +1,4 @@
-package Dao;
+package Deo;
 
 import db.DBConnection;
 import util.CustomerTM;

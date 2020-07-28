@@ -1,6 +1,6 @@
 package bussiness;
 
-import Dao.DaodataLayer;
+import Deo.DaodataLayer;
 import db.DBConnection;
 import util.CustomerTM;
 import util.ItemTM;
