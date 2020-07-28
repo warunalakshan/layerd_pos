@@ -14,7 +14,7 @@ public class OrderDetailDAO {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             Statement stm = connection.createStatement();
-            ResultSet rst = stm.executeQuery("SELECT * FROM `OrderDetail`");
+            ResultSet rst = stm.executeQuery("SELECT * FROM OrderDetail");
             List<OrderDetail> orderDetails = new ArrayList<>();
             while (rst.next()) {
                 orderDetails.add(new OrderDetail(rst.getString(1),
@@ -52,7 +52,7 @@ public class OrderDetailDAO {
     public static boolean saveOrderDetail(OrderDetail orderDetail) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO `OrderDetail` VALUES (?,?,?,?)");
+            PreparedStatement pstm = connection.prepareStatement("INSERT INTO OrderDetail VALUES (?,?,?,?)");
             pstm.setObject(1, orderDetail.getOrderDetailPK().getOrderId());
             pstm.setObject(2, orderDetail.getOrderDetailPK().getItemCode());
             pstm.setObject(3, orderDetail.getQty());
@@ -91,5 +91,21 @@ public class OrderDetailDAO {
             throwables.printStackTrace();
             return false;
         }
+    }
+    public static String getLastOrderId(){
+        Connection connection = DBConnection.getInstance().getConnection();
+
+        try{
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT id from `Order` order by id desc limit 1");
+            resultSet.next();
+            return resultSet.getString(1);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return null;
     }
 }

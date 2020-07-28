@@ -62,23 +62,20 @@ public class BusinessLogic {
     }
 
     public static String getNewOrderId(){
-        String lastOrderId = OrderDAO.getLastOrderId();
-        if (lastOrderId == null){
-            return "OD001";
-        }else{
-            int maxId=  Integer.parseInt(lastOrderId.replace("I",""));
-            maxId = maxId + 1;
-            String id = "";
+
+        String oldId = OrderDetailDAO.getLastOrderId();
+        oldId = oldId.substring(2,5);
+
+        int maxId = Integer.parseInt(oldId) + 1;
+
             if (maxId < 10) {
-                id = "OD00" + maxId;
+                return  "OD00" + maxId;
             } else if (maxId < 100) {
-                id = "OD0" + maxId;
+                return  "OD0" + maxId;
             } else {
-                id = "OD" + maxId;
+                return  "OD" + maxId;
             }
-            return id;
         }
-    }
 
     public static List<CustomerTM> getAllCustomers(){
         List<Customer> allCustomers = CustomerDAO.findAllCustomers();
