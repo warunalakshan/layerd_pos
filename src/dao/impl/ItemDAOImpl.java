@@ -1,5 +1,6 @@
-package Dao;
+package dao.impl;
 
+import dao.ItemDAO;
 import db.DBConnection;
 import entity.Item;
 
@@ -7,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemDAO {
+public class ItemDAOImpl implements ItemDAO {
     public List<Item> findAllItems(){
         try {
             Connection connection = DBConnection.getInstance().getConnection();

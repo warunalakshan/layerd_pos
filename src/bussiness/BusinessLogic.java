@@ -1,9 +1,13 @@
 package bussiness;
 
-import Dao.CustomerDAO;
-import Dao.ItemDAO;
-import Dao.OrderDAO;
-import Dao.OrderDetailDAO;
+import dao.CustomerDAO;
+import dao.ItemDAO;
+import dao.OrderDAO;
+import dao.OrderDetailDAO;
+import dao.impl.CustomerDAOImpl;
+import dao.impl.ItemDAOImpl;
+import dao.impl.OrderDAOImpl;
+import dao.impl.OrderDetailDAOImpl;
 import db.DBConnection;
 import entity.Customer;
 import entity.Item;
@@ -24,7 +28,8 @@ import java.util.List;
 public class BusinessLogic {
 
     public static  String getNewCustomerId(){
-        String oldId = new CustomerDAO().getLastCustomerId();
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        String oldId = customerDAO.getLastCustomerId();
         oldId = oldId.substring(2,5);
 
         int maxId = Integer.parseInt(oldId) + 1;
@@ -39,7 +44,8 @@ public class BusinessLogic {
     }
 
     public static String getNewItemCode(){
-        String oldId = new ItemDAO().getLastItemCode();
+        ItemDAO itemDAO = new ItemDAOImpl();
+        String oldId = itemDAO.getLastItemCode();
         oldId = oldId.substring(2,5);
 
         int maxId = Integer.parseInt(oldId) + 1;
@@ -54,8 +60,8 @@ public class BusinessLogic {
     }
 
     public static String getNewOrderId(){
-
-        String oldId = new OrderDetailDAO().getLastOrderId();
+        OrderDetailDAO orderDetailDAO = new OrderDetailDAOImpl();
+        String oldId = orderDetailDAO.getLastOrderId();
         oldId = oldId.substring(2,5);
 
         int maxId = Integer.parseInt(oldId) + 1;
@@ -70,7 +76,8 @@ public class BusinessLogic {
         }
 
     public static List<CustomerTM> getAllCustomers(){
-        List<Customer> allCustomers = new CustomerDAO().findAllCustomers();
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        List<Customer> allCustomers = customerDAO.findAllCustomers();
         List<CustomerTM> customers = new ArrayList<>();
         for (Customer customer : allCustomers) {
             customers.add(new CustomerTM(customer.getId(),customer.getName(), customer.getAddress()));
@@ -79,19 +86,23 @@ public class BusinessLogic {
     }
 
     public static boolean saveCustomer( String id, String name, String address){
-        return new CustomerDAO().saveCustomer(new Customer(id, name, address));
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        return customerDAO.saveCustomer(new Customer(id, name, address));
     }
 
     public static boolean deleteCustomer(String customerId){
-        return new CustomerDAO().deleteCustomer(customerId);
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        return customerDAO.deleteCustomer(customerId);
     }
 
     public static boolean updateCustomer(String name, String address, String customerId){
-        return new CustomerDAO().updateCustomer(new Customer(customerId, name, address));
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        return customerDAO.updateCustomer(new Customer(customerId, name, address));
     }
 
     public static List<ItemTM> getAllItems(){
-        List<Item> allItems = new ItemDAO().findAllItems();
+        ItemDAO itemDAO = new ItemDAOImpl();
+        List<Item> allItems = itemDAO.findAllItems();
         List<ItemTM> items = new ArrayList<>();
         for (Item item : allItems) {
             items.add(new ItemTM(item.getCode(),item.getDescription(),item.getQtyOnHand(),item.getUnitPrice().doubleValue()));
@@ -100,15 +111,18 @@ public class BusinessLogic {
     }
 
     public static boolean saveItem(String code, String description, int qtyOnHand, double unitPrice){
-        return new ItemDAO().saveItem(new Item(code, description, BigDecimal.valueOf(unitPrice), qtyOnHand));
+        ItemDAO itemDAO = new ItemDAOImpl();
+        return itemDAO.saveItem(new Item(code, description, BigDecimal.valueOf(unitPrice), qtyOnHand));
     }
 
     public static boolean deleteItem(String itemCode) {
-        return new ItemDAO().deleteItem(itemCode);
+        ItemDAO itemDAO = new ItemDAOImpl();
+        return itemDAO.deleteItem(itemCode);
     }
 
     public static boolean updateItem(String description, int qtyOnHand, double unitPrice, String itemCode) {
-        return new ItemDAO().updateItem(new Item(itemCode, description,
+        ItemDAO itemDAO = new ItemDAOImpl();
+        return itemDAO.updateItem(new Item(itemCode, description,
                 BigDecimal.valueOf(unitPrice), qtyOnHand));
     }
 
@@ -116,7 +130,8 @@ public class BusinessLogic {
         Connection connection = DBConnection.getInstance().getConnection();
         try {
             connection.setAutoCommit(false);
-            boolean result = new OrderDAO().saveOrder(new Order(order.getOrderId(),
+            OrderDAO orderDAO = new OrderDAOImpl();
+            boolean result = orderDAO.saveOrder(new Order(order.getOrderId(),
                     Date.valueOf(order.getOrderDate()),
                     order.getCustomerId()));
             if (!result) {
@@ -124,7 +139,8 @@ public class BusinessLogic {
                 return false;
             }
             for (OrderDetailTM orderDetail : orderDetails) {
-                result = new OrderDetailDAO().saveOrderDetail(new OrderDetail(
+                OrderDetailDAO orderDetailDAO = new OrderDetailDAOImpl();
+                result = orderDetailDAO.saveOrderDetail(new OrderDetail(
                         order.getOrderId(), orderDetail.getCode(),
                         orderDetail.getQty(), BigDecimal.valueOf(orderDetail.getUnitPrice())
                 ));
@@ -132,9 +148,10 @@ public class BusinessLogic {
                     connection.rollback();
                     return false;
                 }
-                Item item = new ItemDAO().findItem(orderDetail.getCode());
+                ItemDAO itemDAO = new ItemDAOImpl();
+                Item item = itemDAO.findItem(orderDetail.getCode());
                 item.setQtyOnHand(item.getQtyOnHand() - orderDetail.getQty());
-                result = new ItemDAO().updateItem(item);
+                result = itemDAO.updateItem(item);
                 if (!result){
                     connection.rollback();
                     return false;
