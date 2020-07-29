@@ -9,7 +9,7 @@ import java.util.List;
 
 public class OrderDAO {
 
-    public static List<Order> findAllOrders() {
+    public List<Order> findAllOrders() {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             Statement stm = connection.createStatement();
@@ -27,7 +27,7 @@ public class OrderDAO {
         }
     }
 
-    public static Order findOrder(String orderId) {
+    public Order findOrder(String orderId) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.prepareStatement("SELECT * FROM `Order` WHERE id=?");
@@ -45,7 +45,7 @@ public class OrderDAO {
         }
     }
 
-    public static boolean saveOrder(Order order) {
+    public boolean saveOrder(Order order) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.prepareStatement("INSERT INTO `Order` VALUES (?,?,?)");
@@ -59,7 +59,7 @@ public class OrderDAO {
         }
     }
 
-    public static boolean updateOrder(Order order) {
+    public boolean updateOrder(Order order) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.prepareStatement("UPDATE Order SET date=?, customerId=? WHERE id=?");
@@ -73,7 +73,7 @@ public class OrderDAO {
         }
     }
 
-    public static boolean deleteOrder(String orderId) {
+    public boolean deleteOrder(String orderId) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.prepareStatement("DELETE FROM Order WHERE id=?");
@@ -85,7 +85,7 @@ public class OrderDAO {
         }
     }
 
-    public static String getLastOrderId() {
+    public String getLastOrderId() {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             Statement stm = connection.createStatement();

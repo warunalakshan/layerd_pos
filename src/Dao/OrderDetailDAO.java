@@ -10,7 +10,7 @@ import java.util.List;
 
 public class OrderDetailDAO {
 
-    public static List<OrderDetail> findAllOrderDetails() {
+    public List<OrderDetail> findAllOrderDetails() {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             Statement stm = connection.createStatement();
@@ -29,7 +29,7 @@ public class OrderDetailDAO {
         }
     }
 
-    public static OrderDetail findOrderDetail(OrderDetailPK orderDetailPK) {
+    public OrderDetail findOrderDetail(OrderDetailPK orderDetailPK) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.prepareStatement("SELECT * FROM `OrderDetail` WHERE orderId=? AND itemCode=?");
@@ -49,7 +49,7 @@ public class OrderDetailDAO {
         }
     }
 
-    public static boolean saveOrderDetail(OrderDetail orderDetail) {
+    public boolean saveOrderDetail(OrderDetail orderDetail) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.prepareStatement("INSERT INTO OrderDetail VALUES (?,?,?,?)");
@@ -64,7 +64,7 @@ public class OrderDetailDAO {
         }
     }
 
-    public static boolean updateOrderDetail(OrderDetail orderDetail) {
+    public boolean updateOrderDetail(OrderDetail orderDetail) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.prepareStatement("UPDATE OrderDetail SET qty=?, unitPrice=? WHERE orderId=? AND itemCode=?");
@@ -79,7 +79,7 @@ public class OrderDetailDAO {
         }
     }
 
-    public static boolean deleteOrderDetail(OrderDetailPK orderDetailPK) {
+    public boolean deleteOrderDetail(OrderDetailPK orderDetailPK) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.
@@ -92,7 +92,7 @@ public class OrderDetailDAO {
             return false;
         }
     }
-    public static String getLastOrderId(){
+    public String getLastOrderId(){
         Connection connection = DBConnection.getInstance().getConnection();
 
         try{
